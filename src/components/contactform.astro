@@ -1,0 +1,132 @@
+---
+import Button from "./ui/button.astro";
+---
+
+<form id="form" class="needs-validation" novalidate>
+  <!-- Bot-Schutz für deine PHP-Datei -->
+  <input type="checkbox" class="hidden" style="display:none" name="botcheck" />
+
+  <div class="mb-5">
+    <input
+      type="text"
+      placeholder="Full Name"
+      required
+      class="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-hidden focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+      name="name"
+    />
+    <div class="empty-feedback invalid-feedback text-red-400 text-sm mt-1">
+      Please provide your full name.
+    </div>
+  </div>
+
+  <div class="mb-5">
+    <label for="email_address" class="sr-only">Email Address</label>
+    <input
+      id="email_address"
+      type="email"
+      placeholder="Email Address"
+      name="email"
+      required
+      class="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-hidden focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+    />
+    <div class="empty-feedback text-red-400 text-sm mt-1">
+      Please provide your email address.
+    </div>
+    <div class="invalid-feedback text-red-400 text-sm mt-1">
+      Please provide a valid email address.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <textarea
+      name="message"
+      required
+      placeholder="Your Message"
+      class="w-full px-4 py-3 border-2 placeholder:text-gray-800 rounded-md outline-hidden h-36 focus:ring-4 border-gray-300 focus:border-gray-600 ring-gray-100"
+    ></textarea>
+    <div class="empty-feedback invalid-feedback text-red-400 text-sm mt-1">
+      Please enter your message.
+    </div>
+  </div>
+
+  <Button type="submit" size="lg" block>Nachricht senden</Button>
+
+  <!-- Hier landet die grüne / rote Erfolgsmeldung vom PHP-Skript -->
+  <div id="form-message" class="text-sm font-medium text-center mt-4"></div>
+</form>
+
+<style>
+  .invalid-feedback,
+  .empty-feedback {
+    display: none;
+  }
+
+  .was-validated :placeholder-shown:invalid ~ .empty-feedback {
+    display: block;
+  }
+
+  .was-validated :not(:placeholder-shown):invalid ~ .invalid-feedback {
+    display: block;
+  }
+
+  .is-invalid,
+  .was-validated :invalid {
+    border-color: #dc3545;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('form') as HTMLFormElement;
+    const formMessage = document.getElementById('form-message') as HTMLElement;
+    // Findet den Button innerhalb des Formulars automatisch
+    const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Native Browser-Validierung triggern (.was-validated Klasse setzen)
+      form.classList.add('was-validated');
+      if (!form.checkValidity()) {
+        return; // Abbrechen, wenn Felder leer/ungültig sind
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Wird gesendet...';
+      }
+      if (formMessage) formMessage.textContent = '';
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch('http://localhost/bpb/api/php/send.php', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.status === 'success') {
+          formMessage.className = 'text-sm font-medium text-center mt-4 text-green-600';
+          formMessage.textContent = result.message;
+          form.reset();
+          form.classList.remove('was-validated');
+        } else {
+          formMessage.className = 'text-sm font-medium text-center mt-4 text-red-600';
+          formMessage.textContent = result.message || 'Ein Fehler ist aufgetreten.';
+        }
+      } catch (error) {
+        formMessage.className = 'text-sm font-medium text-center mt-4 text-red-600';
+        formMessage.textContent = 'Verbindungsfehler zum Server (Läuft XAMPP?).';
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Nachricht senden';
+        }
+      }
+    });
+  });
+</script>

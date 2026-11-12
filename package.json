@@ -1,0 +1,35 @@
+{
+  "name": "fahrradschmiede-berlin",
+  "type": "module",
+  "version": "3.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.2.0",
+    "@astrojs/sitemap": "^3.2.1",
+    "@fontsource-variable/bricolage-grotesque": "^5.2.5",
+    "@fontsource-variable/inter": "^5.2.5",
+    "@iconify-json/bx": "^1.2.2",
+    "@iconify-json/simple-icons": "^1.2.28",
+    "@iconify-json/tabler": "^1.2.42",
+    "@iconify-json/uil": "^1.2.3",
+    "@tailwindcss/typography": "^0.5.16",
+    "@tailwindcss/vite": "^4.0.14",
+    "astro": "^5.5.2",
+    "astro-icon": "^1.1.5",
+    "astro-navbar": "^2.3.9",
+    "astro-seo": "^0.8.4",
+    "sharp": "^0.33.5",
+    "tailwindcss": "^4.0.14"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true,
+    "esbuild@0.27.4": true
+  }
+}

@@ -1,0 +1,77 @@
+---
+import { SEO } from "astro-seo";
+import Footer from "@/components/footer.astro";
+import Navbar from "@/components/navbar/navbar.astro";
+import "@fontsource-variable/inter/index.css";
+import "@fontsource-variable/bricolage-grotesque/index.css";
+import "../styles/global.css";
+
+export interface Props {
+  title: string;
+}
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+
+const resolvedImageWithDomain = new URL(
+  "/opengraph.jpg",
+  Astro.site,
+).toString();
+
+const { title } = Astro.props;
+
+const makeTitle = title
+  ? title + " | Fahrradschmiede Berlin"
+  : "Fahrradschmiede Berlin | Meisterbetrieb für Fahrräder & Service";
+---
+
+<!doctype html>
+<html lang="de" class="h-full overflow-hidden">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <SEO
+      title={makeTitle}
+      description="Ihr kompetenter Ansprechpartner für hochwertige Fahrräder, präzisen Werkstatt-Service und individuelle Beratung in Berlin."
+      canonical={canonicalURL}
+      openGraph={{
+        basic: {
+          url: canonicalURL,
+          type: "website",
+          title: makeTitle,
+          image: resolvedImageWithDomain,
+        },
+        image: {
+          alt: "Fahrradschmiede Berlin Logo & Vorschau",
+        },
+      }}
+    />
+  </head>
+  <!-- h-dvh erzwingt die volle Bildschirmhöhe, overflow-hidden stoppt das globale Scrollen -->
+  <body
+    class="h-dvh w-full bg-stone-950 text-stone-100 font-sans antialiased selection:bg-orange-600 selection:text-white flex flex-col justify-between overflow-hidden">
+    <!-- Navbar (bleibt starr oben) -->
+    <div class="shrink-0 z-20">
+      <Navbar />
+    </div>
+
+    <!-- MAIN: Hier passiert ab jetzt das Scrollen, wenn der Inhalt länger ist -->
+    <main class="grow overflow-y-auto flex flex-col">
+      <slot />
+    </main>
+
+    <!-- Footer (bleibt starr unten) -->
+    <div class="shrink-0 z-20">
+      <Footer />
+    </div>
+
+    <style is:global>
+      /* Bild-Optimierung für Ladezeiten */
+      img {
+        content-visibility: auto;
+      }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,108 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import Container from "@/components/container.astro";
+import { siteConfig } from "@/utils/all";
+---
+
+<Layout title="Impressum">
+  <Container>
+    <div
+      class="max-w-xl mx-auto py-10 px-4 space-y-8 text-slate-800 dark:text-slate-200">
+      <!-- Titel -->
+      <h1
+        class="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white">
+        Impressum
+      </h1>
+
+      <!-- Anbieter -->
+      <div class="space-y-1">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">
+          Anbieter
+        </h2>
+        <p class="font-bold text-lg text-slate-900 dark:text-white">
+          {siteConfig.name}
+        </p>
+        <p>{siteConfig.street}</p>
+        <p>{siteConfig.zip} {siteConfig.city}</p>
+      </div>
+
+      <!-- Kontakt -->
+      <div class="space-y-1">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">
+          Kontakt
+        </h2>
+        <p>
+          Tel: <a href={`tel:${siteConfig.phone}`} class="hover:text-orange-600"
+            >{siteConfig.phone}</a
+          >
+        </p>
+        <p>
+          E-Mail: <a
+            href={`mailto:${siteConfig.email}`}
+            class="text-orange-600 hover:underline">{siteConfig.email}</a
+          >
+        </p>
+        <p>
+          Web: <a
+            href={`https://${siteConfig.web}`}
+            target="_blank"
+            rel="noopener"
+            class="hover:text-orange-600">{siteConfig.web}</a
+          >
+        </p>
+      </div>
+
+      <!-- Standort Card -->
+      <div
+        class="bg-slate-50 dark:bg-stone-900 border border-slate-200 dark:border-stone-800 p-5 rounded-2xl shadow-sm space-y-4">
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">
+            Standort
+          </h2>
+          <p class="text-sm italic text-slate-500 dark:text-slate-400">
+            Zoom: 500m Umkreis
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <a
+            href={`https://maps.google.com/?q=${encodeURIComponent(siteConfig.address)}`}
+            target="_blank"
+            rel="noopener"
+            class="flex items-center justify-center gap-2 w-full bg-white dark:bg-stone-800 border border-slate-300 dark:border-stone-700 hover:border-slate-400 text-slate-900 dark:text-white font-bold py-3 px-4 rounded-xl transition-all shadow-sm text-sm">
+            📍 Karte öffnen
+          </a>
+          <!-- <a
+            href={`https://www.google.com/maps/dir/?api=1&destination=${siteConfig.latitude},${siteConfig.longitude}`}
+            target="_blank"
+            rel="noopener"
+            class="flex items-center justify-center gap-2 w-full bg-slate-900 hover:bg-black dark:bg-orange-600 dark:hover:bg-orange-700 text-white font-bold py-3 px-4 rounded-xl transition-all shadow-md text-sm">
+            🚀 Route starten
+          </a> -->
+        </div>
+      </div>
+
+      <!-- Öffnungszeiten -->
+      <div class="space-y-1">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">
+          Öffnungszeiten
+        </h2>
+        <p class="font-medium">{siteConfig.openingHours}</p>
+      </div>
+
+      <!-- Steuer-ID -->
+      <div
+        class="space-y-1 pt-2 border-t border-slate-200 dark:border-stone-800">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">
+          Steuer-ID
+        </h2>
+        <p class="text-sm italic text-slate-600 dark:text-slate-400">
+          USt-IdNr. gem. § 27a UStG:
+        </p>
+        <p class="font-bold font-mono text-slate-900 dark:text-white">
+          {siteConfig.taxId}
+        </p>
+      </div>
+    </div>
+  </Container>
+</Layout>

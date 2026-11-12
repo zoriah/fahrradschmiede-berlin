@@ -1,0 +1,99 @@
+---
+import Container from "@/components/container.astro";
+import { t } from "@/utils/all";
+
+const menuitems = [
+  {
+    title: "Fahrräder",
+    path: "/fahrraeder",
+  },
+  {
+    title: "Kontakt",
+    path: "/contact",
+  },
+];
+
+const pathname = new URL(Astro.request.url, Astro.site).pathname;
+---
+
+<Container>
+  <header class="w-full my-5">
+    <div class="flex lg:flex-nowrap items-center w-full">
+      <!-- Logo ganz links -->
+      <a
+        href="/"
+        class="text-lg font-bold tracking-tight flex items-center gap-2 uppercase text-left">
+        <img
+          src="/favicon.svg"
+          alt="Fahrradschmiede Berlin Logo"
+          class="w-8 h-8 shrink-0"
+        />
+        <div class="flex flex-col sm:flex-row sm:items-baseline gap-1">
+          <div>
+            <span class="text-orange-600 font-black">{t.logo.part1}</span>
+            <span class="text-white">{t.logo.part2}</span>
+          </div>
+          <span class="text-xs font-normal text-slate-400 font-mono"
+            >{t.logo.part3}</span
+          >
+        </div>
+      </a>
+
+      <!-- Mobile Hamburger-Button ganz rechts -->
+      <div class="block lg:hidden">
+        <button
+          id="nav-toggle"
+          class="text-white focus:outline-none p-2"
+          aria-label="Menü umschalten">
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Navigationsleiste (Desktop rechts, Mobil als Dropdown) -->
+      <nav
+        id="nav-menu"
+        class="hidden w-full lg:w-auto lg:flex lg:items-center mt-4 lg:mt-0">
+        <ul class="flex flex-col lg:flex-row lg:gap-6 w-full">
+          {
+            menuitems.map((item) => (
+              <li>
+                <a
+                  href={item.path}
+                  class={`flex py-2 lg:px-3 items-center transition-colors font-medium ${
+                    pathname === item.path ||
+                    (item.path !== "/" && pathname.startsWith(item.path))
+                      ? "text-orange-600 font-semibold"
+                      : "text-gray-300 hover:text-orange-500"
+                  }`}>
+                  <span>{item.title}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+  </header>
+</Container>
+
+<script>
+  // Robustes Vanilla-JS für den mobilen Toggle (ohne React / externe Librarys)
+  const toggleBtn = document.getElementById("nav-toggle");
+  const navMenu = document.getElementById("nav-menu");
+
+  if (toggleBtn && navMenu) {
+    toggleBtn.addEventListener("click", () => {
+      navMenu.classList.toggle("hidden");
+    });
+  }
+</script>

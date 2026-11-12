@@ -1,0 +1,101 @@
+---
+// src/pages/fahrraeder/[id].astro
+import Layout from "../../layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+
+// 1. Interface für das Fahrrad
+export interface Bike {
+  produkt_id: number;
+  titel: string;
+  beschreibung: string;
+  slug: string;
+  preis: string;
+  zustand?: string | null;
+  filiale?: string | null;
+  bild_url?: string | null;
+}
+
+// 2. getStaticPaths
+export async function getStaticPaths() {
+  const apiUrl =
+    import.meta.env.X_API_URL || "http://localhost/api/php/getBikesInfos.php";
+  const apiKey = import.meta.env.X_API_KEY || "";
+
+  try {
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": apiKey,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Fehler beim Laden der Pfade: ${response.statusText}`);
+    }
+
+    const jsonResponse = await response.json();
+    const bikes: Bike[] = jsonResponse.data || jsonResponse || [];
+
+    return bikes.map((bike, index) => ({
+      params: { id: index.toString() },
+      props: { bike },
+    }));
+  } catch (e) {
+    console.error("Fehler in getStaticPaths:", e);
+    return [];
+  }
+}
+
+// 3. Typzuweisung erzwingen, um "never"-Inferenz von Astro zu umgehen:
+const { bike } = Astro.props as unknown as { bike: Bike };
+---
+
+<Layout title={bike ? bike.titel : "Fahrrad nicht gefunden"}>
+  <main class="max-w-4xl mx-auto px-4 py-8 text-white">
+    {/* Zurück-Knopf */}
+    <div class="mb-6">
+      <a
+        href="/fahrraeder"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md text-white text-sm font-medium border border-white/10 transition-colors">
+        <Icon name="tabler:arrow-left" class="w-4 h-4" />
+      </a>
+    </div>
+
+    {
+      bike ? (
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-xl">
+          <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-gray-800 mb-6">
+            <img
+              src={bike.bild_url || "/placeholder-bike.jpg"}
+              alt={bike.titel}
+              class="w-full h-full object-cover"
+            />
+          </div>
+
+          <p class="text-sm text-gray-400 mb-2">
+            {bike.filiale || "Berlin Center"}
+          </p>
+          <h1 class="text-2xl sm:text-3xl font-bold mb-4">{bike.titel}</h1>
+
+          <div class="text-2xl font-extrabold text-emerald-400 mb-6">
+            {bike.preis} €{" "}
+            <span class="text-xs font-normal text-gray-400 ml-2">
+              {bike.zustand || "Gebraucht"}
+            </span>
+          </div>
+
+          <div class="prose prose-invert max-w-none text-gray-300 whitespace-pre-line">
+            {bike.beschreibung}
+          </div>
+        </div>
+      ) : (
+        <div class="text-center py-16">
+          <p class="text-xl text-gray-400">
+            Fahrrad konnte nicht geladen werden.
+          </p>
+        </div>
+      )
+    }
+  </main>
+</Layout>

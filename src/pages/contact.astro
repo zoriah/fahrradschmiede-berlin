@@ -1,0 +1,108 @@
+---
+import Contactform from "@/components/contactform.astro";
+import Container from "@/components/container.astro";
+import Sectionhead from "@/components/sectionhead.astro";
+import Layout from "@/layouts/Layout.astro";
+import { t, siteConfig } from "@/utils/all";
+import { Icon } from "astro-icon/components";
+---
+
+<Layout title="Contact">
+  <Container>
+    <Sectionhead>
+      <Fragment slot="title">{t.contact.title}</Fragment>
+      <Fragment slot="desc">{t.contact.desc}</Fragment>
+    </Sectionhead>
+
+    <div class="grid md:grid-cols-2 gap-10 mx-auto max-w-4xl mt-16">
+      <div>
+        <h2 class="font-medium text-2xl text-gray-800">{siteConfig.name}</h2>
+        <p class="text-lg leading-relaxed text-slate-500 mt-3">
+          {t.description}
+        </p>
+        <div class="mt-5">
+          <div class="flex items-center mt-2 space-x-2 text-gray-600">
+            <Icon class="text-gray-400 w-4 h-4" name="uil:map-marker" />
+            <span>{siteConfig.address}</span>
+          </div>
+          <div class="flex items-center mt-2 space-x-2 text-gray-600">
+            <Icon class="text-gray-400 w-4 h-4" name="uil:envelope" />
+            <a href={`mailto:${siteConfig.email}`}>{siteConfig.email} </a>
+          </div>
+          <div class="flex items-center mt-2 space-x-2 text-gray-600">
+            <Icon class="text-gray-400 w-4 h-4" name="uil:phone" />
+            <!-- Kleinigkeit: Icon für Telefon ergänzt, falls gewünscht -->
+            <a
+              href={`tel:${siteConfig.phone}`}
+              class="hover:text-orange-600 transition-colors">
+              {siteConfig.phone}
+            </a>
+          </div>
+        </div>
+      </div>
+      <div>
+        <!-- Ihr bestehendes Kontaktformular-Element -->
+        <Contactform />
+        <!-- Platz für Statusmeldungen nach dem Absenden -->
+        <div id="form-status" class="mt-4 text-sm hidden"></div>
+      </div>
+    </div>
+  </Container>
+</Layout>
+
+<script>
+  // Greift auf das Formular innerhalb Ihrer Contactform-Komponente zu
+  const form = document.querySelector("form") as HTMLFormElement;
+  const statusDiv = document.getElementById("form-status") as HTMLDivElement;
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const submitBtn = form.querySelector(
+      'button[type="submit"]',
+    ) as HTMLButtonElement;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Wird gesendet...";
+    }
+
+    if (statusDiv) statusDiv.classList.add("hidden");
+
+    const formData = new FormData(form);
+
+    try {
+      // Ersetzen Sie die URL mit dem echten Pfad zu Ihrer send.php auf dem Strato-Server
+      const response = await fetch("http://localhost/bpb/api/php/send.php", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (statusDiv) {
+        statusDiv.classList.remove("hidden");
+        if (response.ok && result.status === "success") {
+          statusDiv.className = "mt-4 text-sm text-green-600 font-medium";
+          statusDiv.textContent = result.message;
+          form.reset();
+        } else {
+          statusDiv.className = "mt-4 text-sm text-red-600 font-medium";
+          statusDiv.textContent =
+            result.message || "Ein Fehler ist aufgetreten.";
+        }
+      }
+    } catch (err) {
+      if (statusDiv) {
+        statusDiv.classList.remove("hidden");
+        statusDiv.className = "mt-4 text-sm text-red-600 font-medium";
+        statusDiv.textContent =
+          "Verbindungsfehler zum Server. Bitte später erneut versuchen.";
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Nachricht senden"; // Text ggf. anpassen falls Ihr Button anders heißt
+      }
+    }
+  });
+</script>
