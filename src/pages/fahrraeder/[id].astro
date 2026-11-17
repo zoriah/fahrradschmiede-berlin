@@ -16,36 +16,36 @@ export interface Bike {
 }
 
 // 2. getStaticPaths
-export async function getStaticPaths() {
-  const apiUrl =
-    import.meta.env.X_API_URL || "http://localhost/api/php/getBikesInfos.php";
-  const apiKey = import.meta.env.X_API_KEY || "";
+// export async function getStaticPaths() {
+//   const apiUrl =
+//     import.meta.env.X_API_URL || "http://localhost/api/php/getBikesInfos.php";
+//   const apiKey = import.meta.env.X_API_KEY || "";
 
-  try {
-    const response = await fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": apiKey,
-      },
-    });
+//   try {
+//     const response = await fetch(apiUrl, {
+//       method: "GET",
+//       headers: {
+//         "Content-Type": "application/json",
+//         "X-API-KEY": apiKey,
+//       },
+//     });
 
-    if (!response.ok) {
-      throw new Error(`Fehler beim Laden der Pfade: ${response.statusText}`);
-    }
+//     if (!response.ok) {
+//       throw new Error(`Fehler beim Laden der Pfade: ${response.statusText}`);
+//     }
 
-    const jsonResponse = await response.json();
-    const bikes: Bike[] = jsonResponse.data || jsonResponse || [];
+//     const jsonResponse = await response.json();
+//     const bikes: Bike[] = jsonResponse.data || jsonResponse || [];
 
-    return bikes.map((bike, index) => ({
-      params: { id: index.toString() },
-      props: { bike },
-    }));
-  } catch (e) {
-    console.error("Fehler in getStaticPaths:", e);
-    return [];
-  }
-}
+//     return bikes.map((bike, index) => ({
+//       params: { id: index.toString() },
+//       props: { bike },
+//     }));
+//   } catch (e) {
+//     console.error("Fehler in getStaticPaths:", e);
+//     return [];
+//   }
+// }
 
 // 3. Typzuweisung erzwingen, um "never"-Inferenz von Astro zu umgehen:
 const { bike } = Astro.props as unknown as { bike: Bike };
