@@ -11,8 +11,10 @@ export default defineConfig({
     "server" /* <- Wichtig damit Server zu Server kommunikation stattfindet.
     Dadurch können geheime Infos vor Benutzern sicher versteckt gehalten werden!
   */,
-  site: "https://astroship.web3templates.com",
-  adapter: cloudflare(),
+  site: "https://fahrradschmiede-berlin.de",
+  adapter: cloudflare({
+    sessionKVBindingName: undefined,
+  }),
   integrations: [mdx(), sitemap(), icon()],
   vite: {
     plugins: [tailwindcss()],
